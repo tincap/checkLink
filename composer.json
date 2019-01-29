@@ -1,0 +1,14 @@
+{
+    "name": "tincap/app",
+    "description": "Обновление ссылок в xpartners",
+    "authors": [
+        {
+            "name": "tincap",
+            "email": "tincap@yandex.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "tincap/xpartners-bot": "dev-master"
+    }
+}
