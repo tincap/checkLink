@@ -10,11 +10,11 @@ use tincap\Bot\Exceptions\ConfigException;
 use tincap\XpartnersBot\Exceptions\LoginException;
 use tincap\XpartnersBot\Exceptions\TokenException;
 use tincap\XpartnersBot\XpartnersBot;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 include __DIR__ . '/../../vendor/autoload.php';
 include __DIR__ . '/../../src/Autoloader.php';
+
+date_default_timezone_set('Europe/Moscow');
 
 class CheckLink
 {
@@ -60,6 +60,8 @@ class CheckLink
         try {
             $client = new Client();
 
+            $this->log("Отправили постбек", __DIR__ . '/../../logs/postback.txt');
+
             $content = $client->request('POST', $this->config['params']['updateLinkHref'], [
                 RequestOptions::FORM_PARAMS => [
                     'new_link' => $newLink,
@@ -67,39 +69,12 @@ class CheckLink
             ])->getBody()->getContents();
 
             if ($content == "OK") {
-
-                // Логируем
-                $log = new Logger('postback');
-
-                try {
-                    $log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/postback.txt', Logger::INFO));
-                } catch (\Exception $e) {
-                    ConsoleHelpers::log($e->getMessage(), 31);
-                }
-
-                $log->info('Отправили постбек', [
-                    'new_link' => $newLink,
-                ]);
-
                 ConsoleHelpers::log("Успешно обновили ссыылку", 32);
             } else {
-
-                // Логируем ошибку
-                $log = new Logger('postback');
-
-                try {
-                    $log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/errors.txt', Logger::ERROR));
-                } catch (\Exception $e) {
-                    ConsoleHelpers::log($e->getMessage(), 31);
-                }
-
-                $log->info('Ошибка при отправке постбека', [
-                    'new_link' => $newLink,
-                ]);
-
                 ConsoleHelpers::log("Ошибка постбека: " . $content, 31);
             }
         } catch (GuzzleException $e) {
+            $this->log("Postback Error", __DIR__ . '/../../logs/errors.txt');
             ConsoleHelpers::log("Postback Error", 31);
         }
     }
@@ -107,7 +82,6 @@ class CheckLink
     public function getNewLink()
     {
         try {
-
             $xpartners = new XpartnersBot($this->config['xpartners']);
             $xpartners->login();
             $json = $xpartners->generateNewLink($this->config['params']['subId']);
@@ -116,11 +90,8 @@ class CheckLink
 
             if (isset($data->Data)) {
                 $linkData = \GuzzleHttp\json_decode($data->Data);
-
                 if (isset($linkData->link)) {
-
                     ConsoleHelpers::log("Успешно сгенерировали ссылку: " . $linkData->link, 32);
-
                     return $linkData->link;
                 }
             }
@@ -138,6 +109,26 @@ class CheckLink
 
         return false;
     }
+
+    /**
+     * Функция запоминает посетителя
+     * @param $message
+     * @param $filePath
+     */
+    function log($message, $filePath)
+    {
+        if (!file_exists($filePath)) {
+            $fp = fopen($filePath, 'w');
+        } else {
+            $fp = fopen($filePath, 'a+');
+        }
+
+        $message = date('d.m.Y H:i') . ' ' . $message . "\n";
+
+        fwrite($fp, $message);
+
+        fclose($fp);
+    }
 }
 
 $checkLink = new CheckLink();
@@ -145,5 +136,6 @@ $checkLink = new CheckLink();
 if (!$checkLink->checkLink()) {
     $checkLink->postback($checkLink->getNewLink());
 } else {
+    $checkLink->log("Ссылка работает", __DIR__ . '/../../logs/success.txt');
     ConsoleHelpers::log("Ссылка работает", 32);
 }

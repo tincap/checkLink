@@ -10,6 +10,5 @@
     "minimum-stability": "dev",
     "require": {
         "tincap/xpartners-bot": "dev-master",
-        "monolog/monolog": "^2.0@dev"
     }
 }
