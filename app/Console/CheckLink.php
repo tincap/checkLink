@@ -10,6 +10,8 @@ use tincap\Bot\Exceptions\ConfigException;
 use tincap\XpartnersBot\Exceptions\LoginException;
 use tincap\XpartnersBot\Exceptions\TokenException;
 use tincap\XpartnersBot\XpartnersBot;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 include __DIR__ . '/../../vendor/autoload.php';
 include __DIR__ . '/../../src/Autoloader.php';
@@ -65,8 +67,36 @@ class CheckLink
             ])->getBody()->getContents();
 
             if ($content == "OK") {
+
+                // Логируем
+                $log = new Logger('postback');
+
+                try {
+                    $log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/postback.txt', Logger::INFO));
+                } catch (\Exception $e) {
+                    ConsoleHelpers::log($e->getMessage(), 31);
+                }
+
+                $log->info('Отправили постбек', [
+                    'new_link' => $newLink,
+                ]);
+
                 ConsoleHelpers::log("Успешно обновили ссыылку", 32);
             } else {
+
+                // Логируем ошибку
+                $log = new Logger('postback');
+
+                try {
+                    $log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/errors.txt', Logger::ERROR));
+                } catch (\Exception $e) {
+                    ConsoleHelpers::log($e->getMessage(), 31);
+                }
+
+                $log->info('Ошибка при отправке постбека', [
+                    'new_link' => $newLink,
+                ]);
+
                 ConsoleHelpers::log("Ошибка постбека: " . $content, 31);
             }
         } catch (GuzzleException $e) {
