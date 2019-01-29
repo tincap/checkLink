@@ -142,7 +142,7 @@ foreach ($params as $param) {
     if (!$checkLink->checkLink($param['link'])) {
         $checkLink->postback($checkLink->getNewLink($param['subId']), $param['updateLinkHref']);
     } else {
-        $this->log("Ссылка " . $param['link'] . " работает", __DIR__ . '/../../logs/success.txt');
+        $checkLink->log("Ссылка " . $param['link'] . " работает", __DIR__ . '/../../logs/success.txt');
         ConsoleHelpers::log("Ссылка " . $param['link'] . " работает", 32);
     }
 }
