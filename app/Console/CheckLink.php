@@ -18,30 +18,28 @@ date_default_timezone_set('Europe/Moscow');
 
 class CheckLink
 {
-    public $config;
+    public $xpartnersConfig;
 
     public function __construct()
     {
-        $this->config = [
-            'xpartners' => require __DIR__ . '/../config/xpartners.php',
-            'params' => require __DIR__ . '/../config/params.php',
-        ];
+        $this->xpartnersConfig = require __DIR__ . '/../config/xpartners.php';
     }
 
     /**
      * Проверяем на работоспособность ссылку
      *
+     * @param $link
      * @return bool
      */
-    public function checkLink()
+    public function checkLink($link)
     {
         $client = new Client();
 
         try {
-            $client->request('GET', $this->config['params']['link'], [
+            $client->request('GET', $link, [
                 'allow_redirects' => true,
-                'timeout' => 3,
-                'connect_timeout' => 3,
+                'timeout' => 4,
+                'connect_timeout' => 4,
             ]);
 
             return true;
@@ -53,16 +51,17 @@ class CheckLink
     /**
      * Постбеком обновляем ссылку
      *
-     * @param $newLink
+     * @param $newLink - новая ссылка
+     * @param $updateLinkHref  - ссылка куда отправляется POST
      */
-    public function postback($newLink)
+    public function postback($newLink, $updateLinkHref)
     {
         try {
             $client = new Client();
 
-            $this->log("Отправили постбек", __DIR__ . '/../../logs/postback.txt');
+            $this->log("Отправили постбек $updateLinkHref", __DIR__ . '/../../logs/postback.txt');
 
-            $content = $client->request('POST', $this->config['params']['updateLinkHref'], [
+            $content = $client->request('POST', $updateLinkHref, [
                 RequestOptions::FORM_PARAMS => [
                     'new_link' => $newLink,
                 ],
@@ -71,7 +70,7 @@ class CheckLink
             if ($content == "OK") {
                 ConsoleHelpers::log("Успешно обновили ссыылку", 32);
             } else {
-                ConsoleHelpers::log("Ошибка постбека: " . $content, 31);
+                ConsoleHelpers::log("Ошибка постбека: $updateLinkHref $content", 31);
             }
         } catch (GuzzleException $e) {
             $this->log("Postback Error", __DIR__ . '/../../logs/errors.txt');
@@ -79,12 +78,16 @@ class CheckLink
         }
     }
 
-    public function getNewLink()
+    /**
+     * @param $subId
+     * @return bool
+     */
+    public function getNewLink($subId)
     {
         try {
-            $xpartners = new XpartnersBot($this->config['xpartners']);
+            $xpartners = new XpartnersBot($this->xpartnersConfig);
             $xpartners->login();
-            $json = $xpartners->generateNewLink($this->config['params']['subId']);
+            $json = $xpartners->generateNewLink($subId);
 
             $data = \GuzzleHttp\json_decode($json);
 
@@ -133,9 +136,12 @@ class CheckLink
 
 $checkLink = new CheckLink();
 
-if (!$checkLink->checkLink()) {
-    $checkLink->postback($checkLink->getNewLink());
-} else {
-    $checkLink->log("Ссылка работает", __DIR__ . '/../../logs/success.txt');
-    ConsoleHelpers::log("Ссылка работает", 32);
+$params = require __DIR__ . '/../config/params.php';
+
+foreach ($params as $param) {
+    if (!$checkLink->checkLink($param['link'])) {
+        $checkLink->postback($checkLink->getNewLink($param['subId']), $param['updateLinkHref']);
+    } else {
+        ConsoleHelpers::log("Ссылка " . $param['link'] . " работает", 32);
+    }
 }
