@@ -9,6 +9,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "tincap/xpartners-bot": "dev-master",
+        "tincap/xpartners-bot": "dev-master"
     }
 }
