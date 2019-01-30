@@ -40,6 +40,10 @@ class CheckLink
                 'allow_redirects' => true,
                 'timeout' => 4,
                 'connect_timeout' => 4,
+                RequestOptions::HEADERS => [
+                    'Referer' => 'https://instagram.com',
+                    'User-Agent' => 'instagram',
+                ],
             ]);
 
             return true;
