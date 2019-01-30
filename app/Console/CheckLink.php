@@ -5,6 +5,8 @@ namespace app\Console;
 use app\Console\Helpers\ConsoleHelpers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\RequestOptions;
 use tincap\Bot\Exceptions\ConfigException;
 use tincap\XpartnersBot\Exceptions\LoginException;
@@ -33,18 +35,27 @@ class CheckLink
      */
     public function checkLink($link)
     {
-        $client = new Client();
-
         try {
-            $client->request('GET', $link, [
+            $container = [];
+            $history = Middleware::history($container);
+            $stack = HandlerStack::create();
+            $stack->push($history);
+
+            $client = new Client(['handler' => $stack]);
+
+            $response = $client->request('GET', $link, [
                 'allow_redirects' => true,
                 'timeout' => 4,
                 'connect_timeout' => 4,
                 RequestOptions::HEADERS => [
                     'Referer' => 'https://instagram.com',
-                    'User-Agent' => 'instagram',
+                    'User-Agent' => 'instagram instagram instagram',
                 ],
             ]);
+
+            if (preg_match('/Доступ ограничен/', $response->getBody()->getContents())) {
+                return false;
+            }
 
             return true;
         } catch (GuzzleException $e) {
