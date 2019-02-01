@@ -8,7 +8,7 @@ return [
     ],
     [
         'link' => 'http://1xbet-1xstavka.ru', // Ссылка, по которой нужно проверять
-        'updateLinkHref' => 'http://1xbet-1xstavka.ru/updateLink.php',
+        'updateLinkHref' => 'http://1xbet-1xstavka.ru/zerkalo/updateLink.php',
         'subId' => 'instagram',
     ]
 ];
