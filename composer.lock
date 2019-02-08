@@ -371,12 +371,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tincap/xpartners-bot.git",
-                "reference": "7e08036e4e13c637d5eaa3662c867d5a0dd10ce4"
+                "reference": "de8f9e346b9466d0deee1f031c2e36affe451e43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tincap/xpartners-bot/zipball/7e08036e4e13c637d5eaa3662c867d5a0dd10ce4",
-                "reference": "7e08036e4e13c637d5eaa3662c867d5a0dd10ce4",
+                "url": "https://api.github.com/repos/tincap/xpartners-bot/zipball/de8f9e346b9466d0deee1f031c2e36affe451e43",
+                "reference": "de8f9e346b9466d0deee1f031c2e36affe451e43",
                 "shasum": ""
             },
             "require": {
@@ -396,7 +396,7 @@
                 }
             ],
             "description": "The 1xpartners bot",
-            "time": "2019-01-29T16:08:26+00:00"
+            "time": "2019-02-08T13:11:13+00:00"
         }
     ],
     "packages-dev": [],

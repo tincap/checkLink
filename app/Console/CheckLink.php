@@ -53,7 +53,7 @@ class CheckLink
                 ],
             ]);
 
-            if (preg_match('/Доступ ограничен/', $response->getBody()->getContents())) {
+            if (preg_match('/Доступ ограничен/u', $response->getBody()->getContents())) {
                 return false;
             }
 
