@@ -43,6 +43,8 @@ class CheckLink
 
             $client = new Client(['handler' => $stack]);
 
+            echo "http://{$this->xpartnersConfig['proxy_auth']}@{$this->xpartnersConfig['proxy_ip']}" . "\n";
+
             $response = $client->request('GET', $link, [
                 'allow_redirects' => true,
                 'timeout' => 4,
@@ -84,7 +86,7 @@ class CheckLink
             ])->getBody()->getContents();
 
             if ($content == "OK") {
-                ConsoleHelpers::log("Успешно обновили ссыылку на $newLink", 32);
+                ConsoleHelpers::log("Успешно обновили ссыылку", 32);
             } else {
                 ConsoleHelpers::log("Ошибка постбека: $updateLinkHref $content", 31);
             }
