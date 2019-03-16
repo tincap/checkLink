@@ -43,7 +43,7 @@ class CheckLink
 
             $client = new Client(['handler' => $stack]);
 
-            echo "http://{$this->xpartnersConfig['proxy_auth']}@{$this->xpartnersConfig['proxy_ip']}" . "\n";
+            echo $link . "\n";
 
             $response = $client->request('GET', $link, [
                 'allow_redirects' => true,
