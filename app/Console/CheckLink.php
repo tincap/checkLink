@@ -84,7 +84,7 @@ class CheckLink
             ])->getBody()->getContents();
 
             if ($content == "OK") {
-                ConsoleHelpers::log("Успешно обновили ссыылку", 32);
+                ConsoleHelpers::log("Успешно обновили ссыылку на $newLink", 32);
             } else {
                 ConsoleHelpers::log("Ошибка постбека: $updateLinkHref $content", 31);
             }
