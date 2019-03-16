@@ -49,7 +49,7 @@ class CheckLink
                 'allow_redirects' => true,
                 'timeout' => 4,
                 'connect_timeout' => 4,
-                'proxy' => "http://{$this->xpartnersConfig['proxy_auth']}@{$this->xpartnersConfig['proxy_ip']}",
+//                'proxy' => "http://{$this->xpartnersConfig['proxy_auth']}@{$this->xpartnersConfig['proxy_ip']}",
                 RequestOptions::HEADERS => [
                     'Referer' => 'https://instagram.com',
                     'User-Agent' => 'instagram instagram instagram',
