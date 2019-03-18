@@ -43,6 +43,8 @@ class CheckLink
 
             $client = new Client(['handler' => $stack]);
 
+            ConsoleHelpers::log("Проверяем ссылку  " . $link, 33);
+
             $response = $client->request('GET', $link, [
                 'allow_redirects' => true,
                 'timeout' => 4,
