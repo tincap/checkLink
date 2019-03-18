@@ -43,12 +43,12 @@ class CheckLink
 
             $client = new Client(['handler' => $stack]);
 
-            ConsoleHelpers::log("Проверяем ссылку  " . $link, 33);
+            ConsoleHelpers::log("Проверяем ссылку " . $link, 33);
 
             $response = $client->request('GET', $link, [
                 'allow_redirects' => true,
-                'timeout' => 4,
-                'connect_timeout' => 4,
+//                'timeout' => 4,
+//                'connect_timeout' => 4,
                 'proxy' => "http://{$this->xpartnersConfig['proxy_auth']}@{$this->xpartnersConfig['proxy_ip']}",
                 RequestOptions::HEADERS => [
                     'Referer' => 'https://instagram.com',
